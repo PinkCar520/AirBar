@@ -1,59 +1,47 @@
-name: macOS CI/CD Pipeline
+name: macOS Build
 
 on:
   push:
-    branches: [main]
-    tags: [v*]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: macOS-latest
+    runs-on: macos-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.2'
 
-      - name: Cache Dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Developer/Xcode/DerivedData
-            ~/.swiftpm
-          key: ${{ runner.os }}-xcode-${{ hashFiles('**/Package.resolved') }}
+    - name: Install dependencies
+      run: |
+        # sudo gem install cocoapods
+        # pod install
 
-      - name: Import Certificates
-        uses: Apple-Actions/import-codesign-certs@v2
-        with:
-          p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE }}
-          p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+    - name: Build with xcodebuild
+      run: |
+        xcodebuild clean build \
+          -project AirBar.xcodeproj \
+          -scheme AirBar \
+          -sdk macosx \
+          -configuration Release \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CONFIGURATION_BUILD_DIR=$(pwd)/build/Release
 
-      - name: Build and Archive
-        run: |
-          xcodebuild -scheme "AirBar" \
-                     -configuration Release \
-                     -archivePath "AirBar.xcarchive" \
-                     archive
+    - name: List build directory for debugging
+      run: ls -la build/Release
 
-      - name: Export IPA
-        run: |
-          xcodebuild -exportArchive \
-                     -archivePath "AirBar.xcarchive" \
-                     -exportOptionsPlist "ExportOptions.plist" \
-                     -exportPath "build"
-
-      - name: Notarize Application
-        uses: Apple-Actions/notarize-app@v1
-        with:
-          app-path: "build/AirBar.app"
-          apple-id: ${{ secrets.APPLE_ID }}
-          password: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-
-      - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: build/AirBar.app.zip
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: AirBar
+        path: build/Release/AirBar.app
