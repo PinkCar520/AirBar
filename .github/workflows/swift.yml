@@ -44,4 +44,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: AirBar
-        path: build/Release/AirBar.app
+        path: build
