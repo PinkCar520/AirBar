@@ -1,3 +1,9 @@
+//
+//  UserPreferences.swift
+//  AirBar
+//
+//  Created by 草莓凤梨 on 3/5/25.
+//
 import Foundation
 
 /// 管理应用程序的用户偏好设置

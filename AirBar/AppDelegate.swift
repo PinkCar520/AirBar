@@ -17,6 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusMenu: NSMenu!                      // 状态栏菜单
     private var hideMenu: NSMenu!                        // 隐藏菜单
     private var hideStatusItem: NSStatusItem?            // 隐藏状态栏项
+    private var preferencesWindowController: NSWindowController? // 主窗口
     
     // 添加一个属性来跟踪 AirBar 的启用状态
     private var isAirBarEnabled: Bool = false {
@@ -32,6 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: - Lifecycle
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // 先检查权限，如果未授权，则引导用户授权
+        PermissionsManager.requestAccessibilityPermission()
         configureStatusBar()
     }
     
@@ -87,11 +90,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusMenu.addItem(gridMenuItem)
         statusMenu.addItem(NSMenuItem.separator())
     }
-    
     private func addSettingsMenuItem() {
         statusMenu.addItem(NSMenuItem(title: "AirBar Settings...",
-                                    action: #selector(openSystemSettings),
-                                    keyEquivalent: "s"))
+                                    action: #selector(showPreferences),
+                                    keyEquivalent: ","))
         statusMenu.addItem(NSMenuItem.separator())
     }
     
@@ -155,6 +157,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 只需更新属性，UI 更新将通过属性观察器自动处理
         isAirBarEnabled = sender.state == .on
     }
+    
+    @objc func showPreferences() {
+        if preferencesWindowController == nil {
+            let storyboard = NSStoryboard(name: "Main", bundle: nil)
+            preferencesWindowController = storyboard.instantiateController(withIdentifier: "PreferencesWindowController") as? NSWindowController
+        }
+        preferencesWindowController?.showWindow(self)
+    }
 }
+
 
 

@@ -1,3 +1,9 @@
+//
+//  MenuHelper.swift
+//  AirBar
+//
+//  Created by 草莓凤梨 on 3/5/25.
+//
 import Cocoa
 
 /// 菜单辅助工具类，用于创建和管理菜单项

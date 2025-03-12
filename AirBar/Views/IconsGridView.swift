@@ -1,3 +1,9 @@
+//
+//  IconsGridView.swift
+//  AirBar
+//
+//  Created by 草莓凤梨 on 3/5/25.
+//
 import SwiftUI
 
 /// 图标网格视图，用于显示系统图标列表
@@ -57,7 +63,7 @@ struct IconsGridView: View {
                 .onAppear {
                     updateParentMenuSize(to: geometry.size.height)
                 }
-                .onChange(of: systemIcons.count) { _ in
+                .onChange(of: systemIcons.count) {
                     updateParentMenuSize(to: geometry.size.height)
                 }
         })

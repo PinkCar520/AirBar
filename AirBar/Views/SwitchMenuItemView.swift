@@ -1,3 +1,10 @@
+//
+//  SwitchMenuItemView.swift
+//  AirBar
+//
+//  Created by 草莓凤梨 on 3/5/25.
+//
+
 import Cocoa
 
 class SwitchMenuItemView: NSView {

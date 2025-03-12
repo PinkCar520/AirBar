@@ -1,3 +1,9 @@
+//
+//  Notification+Extensions.swift
+//  AirBar
+//
+//  Created by 草莓凤梨 on 3/5/25.
+//
 import Foundation
 
 /// 定义应用程序中使用的自定义通知名称
